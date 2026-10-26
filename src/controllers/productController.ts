@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { productSchema } from "../validations/productValidation";
+import { productSchema, idSchema } from "../validations/productValidation";
 
 import prisma from "../utils/prisma";
 
@@ -29,4 +29,58 @@ export async function createProduct(req: Request, res: Response) {
     // return the saved product as json response.
     res.status(201).json(product);
 
+}
+
+export async function getProduct(req: Request, res: Response) {
+
+    // Reads the produuct id frm the url parameters (req.params.id) and validates it using idSchema.
+    const id = idSchema.parse(req.params.id);
+
+    // ask postgres for the product with the id. 
+    // converts and validates the id using idSchema.
+    const product = await prisma.product.findUnique({
+        where: {
+            id: id 
+        }
+    });
+
+    // return the fetched product as json response.
+    res.json(product);
+}
+
+export async function updateProduct(req: Request, res: Response) {
+
+    // validate id from url 
+    const id = idSchema.parse(req.params.id);
+
+    // validate the new product values from the request body.
+    const data = productSchema.parse(req.body);
+
+    // update the product in the database with new data. 
+    const product = await prisma.product.update({
+        where: {
+            id: id
+        },
+        data: data
+    });
+
+    // return the updated product as json response.
+    res.json(product);
+}
+
+// delete a product by its id.
+export async function deleteProduct(req: Request, res: Response) {
+
+    // validate id from url 
+    const id = idSchema.parse(req.params.id);
+
+    // delete the product from the database by its id. 
+    await prisma.product.delete({
+        where: {
+            id: id
+        }
+    });
+
+    // confirms the deletion with a json response.
+    res.json({ message: "Product deleted successfully" });
 }

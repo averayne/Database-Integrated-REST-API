@@ -10,3 +10,7 @@ export const productSchema = z.object({
 // name must be text.
 // priceCents must be a whole number.
 // quantity must be a whole number. 
+
+
+// Converts the input to a number. 
+export const idSchema = z.coerce.number().int().min(1);
