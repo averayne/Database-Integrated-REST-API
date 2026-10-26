@@ -1,0 +1,19 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+// Tells Prisma which database to connect to.
+
+datasource db {
+    provider = "postgresql"
+    url = env("DATABASE_URL")
+}
+
+// Decribes the Product table for PostgreSQL.
+
+model Product {
+    id Int @id @default(autoincrement())
+    name String
+    priceCents Int
+    quantity Int @default(0)
+}
